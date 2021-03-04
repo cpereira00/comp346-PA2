@@ -21,13 +21,21 @@ public class Driver {
     	Network objNetwork = new Network( );            /* Activate the network */
         objNetwork.start();
 
-        Client objClient1 = new Client("sending");          /* Start the sending client thread */
-        objClient1.start();
-        Client objClient2 = new Client("receiving");        /* Start the receiving client thread */
-        objClient2.start();
-        
-      /*..............................................................................................................................................................*/
+        Server serverThread = new Server("Thread1");                        /* Start the server */
+        serverThread.start();
+        Server serverThread2 = new Server("Thread2");                        /* Start the server */
+        serverThread2.start();
+
+        Client clientSendThread = new Client("sending");          /* Start the sending client thread */
+        clientSendThread.start();
+        Client clientReceiveThread = new Client("receiving");        /* Start the receiving client thread */
+        clientReceiveThread.start();
+
+        /*..............................................................................................................................................................*/
        
     }
     
  }
+// server has 2 concurrent threads to update the accounts
+// the synchro of network buffers are using busy-wait so we need to to block a thread when a buffer is full or empty.
+//
