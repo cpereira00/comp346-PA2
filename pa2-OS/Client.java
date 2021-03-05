@@ -204,12 +204,11 @@ public class Client extends Thread {
         if (this.getClientOperation().equals("sending")) {
 
             sendClientStartTime = System.currentTimeMillis();
-            System.out.println("**The sendClient start time is: " + sendClientStartTime);
+            System.out.println("\n**The sendClient start time is: " + sendClientStartTime);
 
             sendTransactions();
 
             sendClientEndTime = System.currentTimeMillis();
-            System.out.println("**The sendClient end time is: " + sendClientEndTime);
             System.out.println("\n*Terminating Client sending Thread, runtime: " + (sendClientEndTime - sendClientStartTime) + " Miliseconds");
         } else {
 

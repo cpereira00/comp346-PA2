@@ -338,7 +338,7 @@ public class Server extends Thread {
      * @param i, amount
      */
    
-     public double deposit(int i, double amount)
+     public synchronized double deposit(int i, double amount)
      {  double curBalance;      /* Current account balance */
        
      		curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -367,7 +367,7 @@ public class Server extends Thread {
      * @param i, amount
      */
  
-     public double withdraw(int i, double amount)
+     public synchronized double withdraw(int i, double amount)
      {  double curBalance;      /* Current account balance */
         
 	curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -386,7 +386,7 @@ public class Server extends Thread {
      * @param i
      */
  
-     public double query(int i)
+     public synchronized double query(int i)
      {  double curBalance;      /* Current account balance */
         
 	curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -415,25 +415,54 @@ public class Server extends Thread {
       
     public void run()
     {   Transactions trans = new Transactions();
-    	 long serverStartTime, serverEndTime;
+    	 long server1StartTime = 0, server1EndTime = 0, server2StartTime = 0,server2EndTime = 0;
     
 	/* System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus()); */
 
-        serverStartTime = System.currentTimeMillis(); // start thread time
 
-	/* System.out.println("\n DEBUG : Server.run() - starting server thread " + objNetwork.getServerConnectionStatus()); */
+        /* System.out.println("\n DEBUG : Server.run() - starting server thread " + objNetwork.getServerConnectionStatus()); */
 
-        if(!Network.getServerConnectionStatus().equals("disconnected")){
+        if(!Network.getServerConnectionStatus().equals("disconnected")) {
+
+            if(getServerThreadId().equals("Thread1")){
+
+                server1StartTime = System.currentTimeMillis(); // start thread time
+
+            }
+            else{
+
+                server2StartTime = System.currentTimeMillis();
+
+            }
+
             processTransactions(trans);
+
+            if(getServerThreadId().equals("Thread1")){
+                server1EndTime = System.currentTimeMillis();
+                setServerThreadRunningStatus1("terminated");
+
+                System.out.println("\n Terminating server thread1 - " + " Running time " + (server1EndTime - server1StartTime) + " milliseconds");
+            }
+            else{
+                server2EndTime = System.currentTimeMillis();
+                setServerThreadRunningStatus2("terminated");
+
+                System.out.println("\n Terminating server thread2 - " + " Running time " + (server2EndTime - server2StartTime) + " milliseconds");
+            }
+
         }
 
-        serverEndTime = System.currentTimeMillis();
+        if(getServerThreadRunningStatus1().equals("terminated") && getServerThreadRunningStatus2().equals("terminated")){
+            Network.disconnect(Network.getServerIP());
 
+        }
 
-        System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime - serverStartTime) + " milliseconds");
-
-        Network.disconnect(Network.getServerIP());
     }
 }
 
-
+// exit termination doesnt always occur, stops midway
+// debug create inconsistency when printing
+/* if you have multiple threads all accessing the same data concurrently, there is risk of a so-called race condition.
+*  For example, one thread could see data in an inconsistent or out-of-date state because another thread is in the process
+*  of updating it. If the two threads are attempting to perform competing operations on the data, they could even leave it in a corrupt state.
+ */
