@@ -424,12 +424,11 @@ public class Server extends Thread {
 
         if(!Network.getServerConnectionStatus().equals("disconnected")) {
 
-            if(getServerThreadId().equals("Thread1")){
+            if (getServerThreadId().equals("Thread1")) {
 
                 server1StartTime = System.currentTimeMillis(); // start thread time
 
-            }
-            else{
+            } else {
 
                 server2StartTime = System.currentTimeMillis();
 
@@ -437,13 +436,12 @@ public class Server extends Thread {
 
             processTransactions(trans);
 
-            if(getServerThreadId().equals("Thread1")){
+            if (getServerThreadId().equals("Thread1")) {
                 server1EndTime = System.currentTimeMillis();
                 setServerThreadRunningStatus1("terminated");
 
                 System.out.println("\n Terminating server thread1 - " + " Running time " + (server1EndTime - server1StartTime) + " milliseconds");
-            }
-            else{
+            } else {
                 server2EndTime = System.currentTimeMillis();
                 setServerThreadRunningStatus2("terminated");
 
@@ -452,11 +450,9 @@ public class Server extends Thread {
 
         }
 
-        if(getServerThreadRunningStatus1().equals("terminated") && getServerThreadRunningStatus2().equals("terminated")){
+        if (getServerThreadRunningStatus1().equals("terminated") && getServerThreadRunningStatus2().equals("terminated")) {
             Network.disconnect(Network.getServerIP());
-
         }
-
     }
 }
 
