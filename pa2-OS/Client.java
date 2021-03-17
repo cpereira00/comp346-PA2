@@ -134,15 +134,15 @@ public class Client extends Thread {
      * @param
      * @return
      */
-    public void sendTransactions() {
+    public void sendTransactions() throws Exception {
         int i = 0;     /* index of transaction array */
 
         while (i < getNumberOfTransactions()) {
 
-            while (Network.getInBufferStatus().equals("full"))
-            {
-                Thread.yield();    /* Yield the cpu if the network input buffer is full */
-            }
+//            while (Network.getInBufferStatus().equals("full"))
+//            {
+//                Thread.yield();    /* Yield the cpu if the network input buffer is full */
+//            }
 
             transaction[i].setTransactionStatus("sent");   /* Set current transaction status */
 
@@ -150,6 +150,7 @@ public class Client extends Thread {
 
             Network.send(transaction[i]);                            /* Transmit current transaction */
             i++;
+
         }
 
     }
@@ -160,16 +161,16 @@ public class Client extends Thread {
      * @param transact
      * @return
      */
-    public void receiveTransactions(Transactions transact) {
+    public void receiveTransactions(Transactions transact) throws Exception {
         int i = 0;     /* Index of transaction array */
 
         while (i < getNumberOfTransactions()) {
 
-            while (Network.getOutBufferStatus().equals("empty"))
-            {
-                Thread.yield();    /* Yield the cpu if the network output buffer is full */
-
-            }
+//            while (Network.getOutBufferStatus().equals("empty"))
+//            {
+//                Thread.yield();    /* Yield the cpu if the network output buffer is full */
+//
+//            }
 
             Network.receive(transact);                                /* Receive updated transaction from the network buffer */
 
@@ -206,16 +207,25 @@ public class Client extends Thread {
             sendClientStartTime = System.currentTimeMillis();
             System.out.println("\n**The sendClient start time is: " + sendClientStartTime);
 
-            sendTransactions();
+            try {
+                sendTransactions();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             sendClientEndTime = System.currentTimeMillis();
             System.out.println("\n*Terminating Client sending Thread, runtime: " + (sendClientEndTime - sendClientStartTime) + " Miliseconds");
+
         } else {
 
             receiveClientStartTime = System.currentTimeMillis();
             System.out.println("**The receiveClient start time is: " + receiveClientStartTime);
 
-            receiveTransactions(transact);
+            try {
+                receiveTransactions(transact);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             receiveClientEndTime = System.currentTimeMillis();
             System.out.println("\n*Terminating Client receive Thread, runtime: " + (receiveClientEndTime - receiveClientStartTime) + " Miliseconds");
